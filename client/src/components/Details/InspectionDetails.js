@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Button, Container, Form, Row, Col, Nav } from "react-bootstrap";
+import { Button, Container,ButtonGroup,ToggleButton, Form, Row, Col, Nav } from "react-bootstrap";
 import { useHistory } from "react-router";
 import Navbar from "../Navbar/NavbarAdmin";
 import axios from "axios";
 import serverUrl from "../../api/index";
+
+
 
 export default function InspectionDetails(props) {
   const history = useHistory();
@@ -36,6 +38,11 @@ export default function InspectionDetails(props) {
   const [productionLine, setProductionLine] = useState(getProductionLine());
   const [productIndex, setProductIndex] = useState(-1);
   const [product, setProduct] = useState(getProductInfo());
+  const radios = [
+    { name: 'Rework Details', value: '1' },
+    { name: 'Rejection Details', value: '2' },
+  ];
+  const [radioValue, setRadioValue] = useState('1');
 
   const checkAuthorization = async () => {
     try {
@@ -323,6 +330,27 @@ export default function InspectionDetails(props) {
             </Col>
           </Form.Group>
           <br />
+          <Row className="justify-content-md-end">
+          <Col sm="7" >
+          <ButtonGroup>
+        {radios.map((radio, idx) => (
+          <ToggleButton
+            key={idx}
+            id={`radio-${idx}`}
+            type="radio"
+            variant={idx % 2 ? 'outline-success' : 'outline-danger'}
+            name="radio"
+            value={radio.value}
+            checked={radioValue === radio.value}
+            onChange={(e) => setRadioValue(e.currentTarget.value)}
+          >
+            {radio.name}
+          </ToggleButton>
+        ))}
+      </ButtonGroup>
+            </Col>
+
+          </Row>
 
           <Row className="justify-content-md-end">
             <Col sm="7">
@@ -330,7 +358,12 @@ export default function InspectionDetails(props) {
                 variant="danger"
                 size="lg"
                 className="mx-2"
-                onClick={(event) => (window.location.href = "/rework")}
+                onClick={event => {
+                  if(radioValue==1)
+                  window.location.href = "/rework"
+                  if(radioValue==2)
+                  window.location.href = "/rejection"
+                  }}
               >
                 NEXT
               </Button>
